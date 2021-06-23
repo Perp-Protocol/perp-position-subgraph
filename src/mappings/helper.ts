@@ -1,4 +1,4 @@
-import { AmmPosition, Position, Amm } from "../../generated/schema"
+import { AmmPosition, Position, Amm, ReferralCode, Referrer, ReferralCodeDayData } from "../../generated/schema"
 import { BigInt, Address } from "@graphprotocol/graph-ts"
 import { PositionChanged } from "../../generated/ClearingHouse/ClearingHouse"
 
@@ -120,4 +120,46 @@ export function createAmm(ammAddress: Address): Amm {
 
 export function parseAmmId(ammAddress: Address): string {
   return ammAddress.toHexString()
+}
+
+export function createReferrer(referrerAddress: Address) {
+  let referrer = new Referrer(referrerAddress.toHexString());
+  referrer.referralCode = "";
+  referrer.save();
+  return referrer;
+}
+
+export function getReferrer(referrerAddress: Address): Referrer {
+  let referrer = Referrer.load(referrerAddress.toHexString());
+  if (!referrer) {
+    referrer = createReferrer(referrerAddress);
+  }
+  return referrer;
+}
+
+export function createReferralCode(referralCode: string, referrer: Address, createdAt: BigInt) {
+  let _referralCode = new ReferralCode(referralCode);
+  let _referrer = getReferrer(referrer);
+  _referralCode.referrer = _referrer.id;
+  _referralCode.referees = [];
+  _referralCode.createdAt = createdAt;
+  _referralCode.save();
+  return _referralCode;
+}
+
+export function getReferralCode(referralCode: string) {
+  let _referralCode = ReferralCode.load(referralCode);
+  return _referralCode!;
+}
+
+export function getReferralCodeDayData(id: string, referralCode: string) {
+  let dayData = ReferralCodeDayData.load(id);
+  if (!dayData) {
+    dayData = new ReferralCodeDayData(id);
+    dayData.referralCode = referralCode;
+    dayData.tradingVolume = BI_ZERO;
+    dayData.date = BI_ZERO;
+    dayData.save();
+  }
+  return dayData;
 }

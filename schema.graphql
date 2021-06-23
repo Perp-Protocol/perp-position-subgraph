@@ -102,3 +102,23 @@ type MarginChangedEvent @entity {
   blockNumber: BigInt! # last updated block number
   timestamp: BigInt! # last updated timestamp
 }
+
+type Referrer @entity {
+  id: ID!
+  referralCode: String!
+}
+
+type ReferralCode @entity {
+  id: ID!
+  referrer: Referrer! # referrer address
+  referees: [Bytes!]! # referees
+  createdAt: BigInt! # created at
+}
+
+type ReferralCodeDayData @entity {
+  id: ID!
+  referralCode: ReferralCode!
+  date: BigInt!
+  newReferees: [Bytes!]! # addresses of new referees
+  tradingVolume: BigInt! # trading volume in notional value
+}

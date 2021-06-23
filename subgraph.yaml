@@ -417,3 +417,26 @@ dataSources:
           handler: handleFundingRateUpdated
         - event: ReserveSnapshotted(uint256,uint256,uint256)
           handler: handleReserveSnapshotted
+  - kind: ethereum/contract
+    name: ReferrerContract
+    network: xdai
+    source:
+      address: "0x187C938543f2BDE09Fe39034Fe3Ff797A3D35cA0"
+      abi: PerpetualProtocolReferrer
+      startBlock: 16230242
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/referrer.ts
+      entities:
+        - ReferralCode
+        - ReferralCodeDayData
+      abis:
+        - name: PerpetualProtocolReferrer
+          file: ./abis/PerpetualProtocolReferrer.json
+      eventHandlers:
+        - event: OnReferralCodeCreated(address,address,uint256,string)
+          handler: handleReferralCodeCreated
+        - event: OnReferralCodeUpserted(address,uint8,uint256,string,string)
+          handler: handleReferralCodeUpserted

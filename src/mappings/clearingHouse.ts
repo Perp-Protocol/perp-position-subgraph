@@ -16,6 +16,9 @@ import {
   calcNewAmmOpenNotional, decimal,
   getAmm,
   BI_ZERO,
+  getReferrer,
+  getReferralCode,
+  getReferralCodeDayData,
 } from "./helper"
 import { BigInt } from "@graphprotocol/graph-ts"
 
@@ -26,6 +29,8 @@ export function handlePositionChanged(event: PositionChanged): void {
   let position = getPosition(event.params.trader)
   let ammPosition = getAmmPosition(event.params.amm, event.params.trader)
   let amm = getAmm(event.params.amm)
+  let referrer = getReferrer(event.params.trader);
+  let referralCode = getReferralCode(referrer.referralCode);
 
   let newAmmMargin = event.params.margin
   let newMargin = position.margin.minus(ammPosition.margin).plus(event.params.margin)
@@ -107,6 +112,21 @@ export function handlePositionChanged(event: PositionChanged): void {
   amm.openInterestNotional = newAmmOpenInterestNotional
   amm.blockNumber = event.block.number
   amm.timestamp = event.block.timestamp
+
+  //
+  // update referral trading volumes
+  //
+  if (referralCode) {
+    let timestamp = event.block.timestamp.toI32();
+    let dayID = timestamp / 86400;
+    let dayStartTimestamp = dayID * 86400;
+    let referralCodeDayData = getReferralCodeDayData(referralCode.id + "-" + dayID.toString(), referralCode.id);
+    referralCodeDayData.tradingVolume = referralCodeDayData.tradingVolume.plus(
+      event.params.positionNotional
+    );
+    referralCodeDayData.date = BigInt.fromI32(dayStartTimestamp);
+    referralCodeDayData.save();
+  }
 
   // commit changes
   position.save()
