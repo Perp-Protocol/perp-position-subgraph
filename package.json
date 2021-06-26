@@ -6,7 +6,9 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "npm run codegen && graph build",
-    "deploy": "npm run build && graph deploy perpetual-protocol/perp-position-subgraph --access-token ${THE_GRAPH_ACCESS_TOKEN} --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/"
+    "deploy": "npm run build && graph deploy perpetual-protocol/perp-position-subgraph --access-token ${THE_GRAPH_ACCESS_TOKEN} --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/",
+    "create-local": "graph create perp-local-subgraph --node http://127.0.0.1:8020",
+    "deploy-local": "graph deploy perp-local-subgraph --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
   },
   "keywords": [],
   "author": "",

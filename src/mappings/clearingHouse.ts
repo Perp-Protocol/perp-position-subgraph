@@ -116,17 +116,17 @@ export function handlePositionChanged(event: PositionChanged): void {
   //
   // update referral trading volumes
   //
-  if (referralCode) {
-    let timestamp = event.block.timestamp.toI32();
-    let dayID = timestamp / 86400;
-    let dayStartTimestamp = dayID * 86400;
-    let referralCodeDayData = getReferralCodeDayData(referralCode.id + "-" + dayID.toString(), referralCode.id);
-    referralCodeDayData.tradingVolume = referralCodeDayData.tradingVolume.plus(
-      event.params.positionNotional
-    );
-    referralCodeDayData.date = BigInt.fromI32(dayStartTimestamp);
-    referralCodeDayData.save();
-  }
+  // if (referralCode) {
+  //   let timestamp = event.block.timestamp.toI32();
+  //   let dayID = timestamp / 86400;
+  //   let dayStartTimestamp = dayID * 86400;
+  //   let referralCodeDayData = getReferralCodeDayData(referralCode.id + "-" + dayID.toString(), referralCode.id);
+  //   referralCodeDayData.tradingVolume = referralCodeDayData.tradingVolume.plus(
+  //     event.params.positionNotional
+  //   );
+  //   referralCodeDayData.date = BigInt.fromI32(dayStartTimestamp);
+  //   referralCodeDayData.save();
+  // }
 
   // commit changes
   position.save()

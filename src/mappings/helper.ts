@@ -122,7 +122,7 @@ export function parseAmmId(ammAddress: Address): string {
   return ammAddress.toHexString()
 }
 
-export function createReferrer(referrerAddress: Address) {
+export function createReferrer(referrerAddress: Address): Referrer {
   let referrer = new Referrer(referrerAddress.toHexString());
   referrer.referralCode = "";
   referrer.save();
@@ -134,25 +134,25 @@ export function getReferrer(referrerAddress: Address): Referrer {
   if (!referrer) {
     referrer = createReferrer(referrerAddress);
   }
-  return referrer;
+  return referrer!;
 }
 
-export function createReferralCode(referralCode: string, referrer: Address, createdAt: BigInt) {
+export function createReferralCode(referralCode: string, referrer: Address, createdAt: BigInt): ReferralCode {
   let _referralCode = new ReferralCode(referralCode);
   let _referrer = getReferrer(referrer);
   _referralCode.referrer = _referrer.id;
   _referralCode.referees = [];
   _referralCode.createdAt = createdAt;
   _referralCode.save();
-  return _referralCode;
+  return _referralCode!;
 }
 
-export function getReferralCode(referralCode: string) {
+export function getReferralCode(referralCode: string): ReferralCode {
   let _referralCode = ReferralCode.load(referralCode);
   return _referralCode!;
 }
 
-export function getReferralCodeDayData(id: string, referralCode: string) {
+export function getReferralCodeDayData(id: string, referralCode: string): ReferralCodeDayData {
   let dayData = ReferralCodeDayData.load(id);
   if (!dayData) {
     dayData = new ReferralCodeDayData(id);
@@ -161,5 +161,5 @@ export function getReferralCodeDayData(id: string, referralCode: string) {
     dayData.date = BI_ZERO;
     dayData.save();
   }
-  return dayData;
+  return dayData!;
 }

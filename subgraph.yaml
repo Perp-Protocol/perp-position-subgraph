@@ -6,7 +6,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: ClearingHouse
-    network: xdai
+    network: mainnet
     source:
       address: "0x5d9593586b4B5edBd23E7Eba8d88FD8F09D83EBd"
       abi: ClearingHouse
@@ -36,7 +36,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmBTCUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0x0f346e19F01471C02485DF1758cfd3d624E399B4"
       abi: Amm
@@ -60,7 +60,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmETHUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0x8d22F1a9dCe724D8c1B4c688D75f17A2fE2D32df"
       abi: Amm
@@ -84,7 +84,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmDOTUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0x6de775aaBEEedE8EFdB1a257198d56A3aC18C2FD"
       abi: Amm
@@ -108,7 +108,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmYFIUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0xd41025350582674144102B74B8248550580bb869"
       abi: Amm
@@ -132,7 +132,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmSNXUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0xb397389B61cbF3920d297b4ea1847996eb2ac8E8"
       abi: Amm
@@ -156,7 +156,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmAAVEUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0x16A7ECF2c27Cb367Df36d39e389e66B42000E0dF"
       abi: Amm
@@ -180,7 +180,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmLINKUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0x80DaF8ABD5a6Ba182033B6464e3E39A0155DCC10"
       abi: Amm
@@ -204,7 +204,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmSUSHIUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0xF559668108Ff57745D5e3077B0A7Dd92FFc6300c"
       abi: Amm
@@ -228,7 +228,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmCOMPUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0x33FbaeFb2dCc3B7e0B80afbB4377C2EB64AF0a3A"
       abi: Amm
@@ -252,7 +252,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmRENUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0x922F28072BaBe6EA0C0c25cCD367Fda0748a5EC7"
       abi: Amm
@@ -276,7 +276,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmPERPUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0xfcAE57DB10356FCf76B6476B21ac14C504a45128"
       abi: Amm
@@ -300,7 +300,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmUNIUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0xeaC6CEE594EdD353351BaBc145C624849Bb70b11"
       abi: Amm
@@ -324,7 +324,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmCRVUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0xAB08fF2c726F2F333802630EE19F4146385CC343"
       abi: Amm
@@ -348,7 +348,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmMKRUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0xb48F7aCcc03a3C64114170291F352b37eEa26c0B"
       abi: Amm
@@ -372,7 +372,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmCREAMUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0x7B479a0a816ca33F8EB5A3312d1705a34d2d4C82"
       abi: Amm
@@ -396,7 +396,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: AmmGRTUSDC
-    network: xdai
+    network: mainnet
     source:
       address: "0x187C938543f2BDE09Fe39034Fe3Ff797A3D35cA0"
       abi: Amm
@@ -419,11 +419,10 @@ dataSources:
           handler: handleReserveSnapshotted
   - kind: ethereum/contract
     name: ReferrerContract
-    network: xdai
+    network: mainnet
     source:
-      address: "0x187C938543f2BDE09Fe39034Fe3Ff797A3D35cA0"
+      address: "0xb80c97ca95b2088c6b4ce880ed8b880b4ddd379d"
       abi: PerpetualProtocolReferrer
-      startBlock: 16230242
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -431,7 +430,7 @@ dataSources:
       file: ./src/mappings/referrer.ts
       entities:
         - ReferralCode
-        - ReferralCodeDayData
+        - Referrer
       abis:
         - name: PerpetualProtocolReferrer
           file: ./abis/PerpetualProtocolReferrer.json

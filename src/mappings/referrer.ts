@@ -4,9 +4,10 @@ import {
 } from '../../generated/ReferrerContract/PerpetualProtocolReferrer';
 import { createReferralCode, getReferralCode, getReferrer } from './helper';
 
-export function handleReferralCodeCreated(event: OnReferralCodeCreated) {
-  // createdFor represents the referrer
+export function handleReferralCodeCreated(event: OnReferralCodeCreated): void {
   let referrer = getReferrer(event.params.createdFor);
+
+  //   createdFor represents the referrer
   createReferralCode(
     event.params.referralCode,
     event.params.createdFor,
@@ -16,7 +17,9 @@ export function handleReferralCodeCreated(event: OnReferralCodeCreated) {
   referrer.save();
 }
 
-export function handleReferralCodeUpserted(event: OnReferralCodeUpserted) {
+export function handleReferralCodeUpserted(
+  event: OnReferralCodeUpserted
+): void {
   let existingReferralCode = getReferralCode(event.params.oldReferralCode);
   let newReferralCode = getReferralCode(event.params.newReferralCode);
   // Referee adds code
