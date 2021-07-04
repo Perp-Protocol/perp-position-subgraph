@@ -421,7 +421,7 @@ dataSources:
     name: ReferrerContract
     network: mainnet
     source:
-      address: "0xb80c97ca95b2088c6b4ce880ed8b880b4ddd379d"
+      address: "0x7019BAF75A3bc2233f34aF3E9B42F0Bc3Ceb1285"
       abi: PerpetualProtocolReferrer
     mapping:
       kind: ethereum/events

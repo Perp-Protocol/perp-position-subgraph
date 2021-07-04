@@ -1,5 +1,5 @@
 import { AmmPosition, Position, Amm, ReferralCode, Referrer, ReferralCodeDayData } from "../../generated/schema"
-import { BigInt, Address } from "@graphprotocol/graph-ts"
+import { BigInt, Address, Bytes } from "@graphprotocol/graph-ts"
 import { PositionChanged } from "../../generated/ClearingHouse/ClearingHouse"
 
 export let BI_ZERO = BigInt.fromI32(0)
@@ -162,4 +162,17 @@ export function getReferralCodeDayData(id: string, referralCode: string): Referr
     dayData.save();
   }
   return dayData!;
+}
+
+export function removeAddressFromList(addresses: Bytes[], addressToRemove: string): Bytes[] {
+    let spliceIndex = -1;
+    for (let i = 0; i < addresses.length; ++i) {
+      if (addressToRemove == addresses[i].toHexString()) {
+        spliceIndex = i;
+      }
+    }
+    if (spliceIndex > -1) {
+      addresses.splice(spliceIndex, 1);
+    }
+    return addresses;
 }

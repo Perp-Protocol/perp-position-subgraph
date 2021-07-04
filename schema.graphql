@@ -105,7 +105,7 @@ type MarginChangedEvent @entity {
 
 type Referrer @entity {
   id: ID!
-  referralCode: String!
+  referralCode: ReferralCode!
 }
 
 type ReferralCode @entity {
@@ -119,6 +119,5 @@ type ReferralCodeDayData @entity {
   id: ID!
   referralCode: ReferralCode!
   date: BigInt!
-  newReferees: [Bytes!]! # addresses of new referees
   tradingVolume: BigInt! # trading volume in notional value
 }
