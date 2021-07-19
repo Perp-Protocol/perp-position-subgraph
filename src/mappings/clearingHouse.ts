@@ -16,7 +16,7 @@ import {
   calcNewAmmOpenNotional, decimal,
   getAmm,
   BI_ZERO,
-  getReferrer,
+  getTrader,
   getReferralCode,
   getReferralCodeDayData,
 } from "./helper"
@@ -29,8 +29,8 @@ export function handlePositionChanged(event: PositionChanged): void {
   let position = getPosition(event.params.trader)
   let ammPosition = getAmmPosition(event.params.amm, event.params.trader)
   let amm = getAmm(event.params.amm)
-  let referrer = getReferrer(event.params.trader);
-  let referralCode = getReferralCode(referrer.referralCode);
+  let trader = getTrader(event.params.trader);
+  let refereeCode = getReferralCode(trader.refereeCode);
 
   let newAmmMargin = event.params.margin
   let newMargin = position.margin.minus(ammPosition.margin).plus(event.params.margin)
@@ -114,19 +114,25 @@ export function handlePositionChanged(event: PositionChanged): void {
   amm.timestamp = event.block.timestamp
 
   //
-  // update referral trading volumes
+  // update referral trading volumes,
+  // if the trader has entered a referral code
   //
-  // if (referralCode) {
-  //   let timestamp = event.block.timestamp.toI32();
-  //   let dayID = timestamp / 86400;
-  //   let dayStartTimestamp = dayID * 86400;
-  //   let referralCodeDayData = getReferralCodeDayData(referralCode.id + "-" + dayID.toString(), referralCode.id);
-  //   referralCodeDayData.tradingVolume = referralCodeDayData.tradingVolume.plus(
-  //     event.params.positionNotional
-  //   );
-  //   referralCodeDayData.date = BigInt.fromI32(dayStartTimestamp);
-  //   referralCodeDayData.save();
-  // }
+  if (refereeCode) {
+    let referralCodeDayData = getReferralCodeDayData(event, refereeCode.id);
+
+    // uptick trading vol for the referral code
+    referralCodeDayData.tradingVolume = referralCodeDayData.tradingVolume.plus(
+      event.params.positionNotional
+    );
+
+    // uptick active traders for the referral code
+    let activeTraders = referralCodeDayData.activeReferees;
+    if (!activeTraders.includes(event.params.trader)) {
+      activeTraders.push(event.params.trader);
+      referralCodeDayData.activeReferees = activeTraders;
+    }
+    referralCodeDayData.save();
+  }
 
   // commit changes
   position.save()

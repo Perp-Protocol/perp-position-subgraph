@@ -2,12 +2,16 @@ import {
   OnReferralCodeCreated,
   OnReferralCodeUpserted
 } from '../../generated/ReferrerContract/PerpetualProtocolReferrer';
-import { createReferralCode, getReferralCode, getReferrer, removeAddressFromList } from './helper';
-import { BigInt } from "@graphprotocol/graph-ts"
-import { log } from '@graphprotocol/graph-ts';
+import {
+  createReferralCode,
+  getReferralCode,
+  getReferralCodeDayData,
+  getTrader,
+  removeAddressFromList
+} from './helper';
 
 export function handleReferralCodeCreated(event: OnReferralCodeCreated): void {
-  let referrer = getReferrer(event.params.createdFor);
+  let trader = getTrader(event.params.createdFor);
 
   // createdFor represents the referrer
   createReferralCode(
@@ -15,28 +19,39 @@ export function handleReferralCodeCreated(event: OnReferralCodeCreated): void {
     event.params.createdFor,
     event.params.timestamp
   );
-  referrer.referralCode = event.params.referralCode;
-  referrer.save();
+  trader.referrerCode = event.params.referralCode;
+  trader.save();
 }
 
 export function handleReferralCodeUpserted(
   event: OnReferralCodeUpserted
 ): void {
-  log.error('OLD REF CODE ID {}, NEW REF CODE ID {}, ACTION, {}', [event.params.oldReferralCode, event.params.newReferralCode, BigInt.fromI32(event.params.action).toString()]);
   let existingReferralCode = getReferralCode(event.params.oldReferralCode);
+  let trader = getTrader(event.params.addr);
   // Only proceed any action, if the referee has a code attached
   if (existingReferralCode) {
     // Referee removes code
     let existingReferees = existingReferralCode.referees;
     if (event.params.action == 1) {
-      existingReferralCode.referees = removeAddressFromList(existingReferees, event.params.addr.toHexString());
+      existingReferralCode.referees = removeAddressFromList(
+        existingReferees,
+        event.params.addr.toHexString()
+      );
       existingReferralCode.save();
+
+      // trader no longer has a referee code
+      trader.refereeCode = null;
+      trader.save();
       return;
     }
 
-    // add and update should only be possible if newReferralCode contains a value 
+    // add and update should only be possible if newReferralCode contains a value
     if (event.params.newReferralCode != '') {
       let newReferralCode = getReferralCode(event.params.newReferralCode);
+      let newReferralCodeDayData = getReferralCodeDayData(
+        event,
+        newReferralCode.id
+      );
       let newReferees = newReferralCode.referees;
 
       if (event.params.action == 0) {
@@ -46,12 +61,13 @@ export function handleReferralCodeUpserted(
         existingReferees.push(event.params.addr);
         existingReferralCode.referees = existingReferees;
         existingReferralCode.save();
-        return;
-      }
-      if (event.params.action == 2) {
+      } else if (event.params.action == 2) {
         // Referee updates the referral code
         // Remove referee from the old referral code list
-        existingReferralCode.referees = removeAddressFromList(existingReferees, event.params.addr.toHexString());
+        existingReferralCode.referees = removeAddressFromList(
+          existingReferees,
+          event.params.addr.toHexString()
+        );
         existingReferralCode.save();
 
         // Add referee to referral code that was updated to
@@ -59,8 +75,17 @@ export function handleReferralCodeUpserted(
         newReferees.push(event.params.addr);
         newReferralCode.referees = newReferees;
         newReferralCode.save();
-        return;
       }
+
+      // uptick new referee daydata when an update or new referee is added
+      let newReferralReferees = newReferralCodeDayData.newReferees;
+      newReferralReferees.push(event.params.addr);
+      newReferralCodeDayData.newReferees = newReferralReferees;
+      newReferralCodeDayData.save();
+
+      // update the referee code for the trader (sender)
+      trader.refereeCode = newReferralCode.id;
+      trader.save();
     }
   }
 }

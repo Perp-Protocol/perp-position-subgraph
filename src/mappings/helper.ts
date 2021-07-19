@@ -1,5 +1,5 @@
-import { AmmPosition, Position, Amm, ReferralCode, Referrer, ReferralCodeDayData } from "../../generated/schema"
-import { BigInt, Address, Bytes } from "@graphprotocol/graph-ts"
+import { AmmPosition, Position, Amm, ReferralCode, Trader, ReferralCodeDayData } from "../../generated/schema"
+import { BigInt, Address, Bytes, ethereum } from "@graphprotocol/graph-ts"
 import { PositionChanged } from "../../generated/ClearingHouse/ClearingHouse"
 
 export let BI_ZERO = BigInt.fromI32(0)
@@ -122,24 +122,25 @@ export function parseAmmId(ammAddress: Address): string {
   return ammAddress.toHexString()
 }
 
-export function createReferrer(referrerAddress: Address): Referrer {
-  let referrer = new Referrer(referrerAddress.toHexString());
-  referrer.referralCode = "";
-  referrer.save();
-  return referrer;
+export function createTrader(traderAddress: Address): Trader {
+  let trader = new Trader(traderAddress.toHexString());
+  trader.referrerCode = "";
+  trader.refereeCode = "";
+  trader.save();
+  return trader;
 }
 
-export function getReferrer(referrerAddress: Address): Referrer {
-  let referrer = Referrer.load(referrerAddress.toHexString());
-  if (!referrer) {
-    referrer = createReferrer(referrerAddress);
+export function getTrader(traderAddress: Address): Trader {
+  let trader = Trader.load(traderAddress.toHexString());
+  if (!trader) {
+    trader = createTrader(traderAddress);
   }
-  return referrer!;
+  return trader!;
 }
 
 export function createReferralCode(referralCode: string, referrer: Address, createdAt: BigInt): ReferralCode {
   let _referralCode = new ReferralCode(referralCode);
-  let _referrer = getReferrer(referrer);
+  let _referrer = getTrader(referrer);
   _referralCode.referrer = _referrer.id;
   _referralCode.referees = [];
   _referralCode.createdAt = createdAt;
@@ -152,13 +153,19 @@ export function getReferralCode(referralCode: string): ReferralCode {
   return _referralCode!;
 }
 
-export function getReferralCodeDayData(id: string, referralCode: string): ReferralCodeDayData {
+export function getReferralCodeDayData(event: ethereum.Event, referralCode: string): ReferralCodeDayData {
+  let timestamp = event.block.timestamp.toI32();
+  let dayID = timestamp / 86400;
+  let id = referralCode + '-' + dayID.toString();
   let dayData = ReferralCodeDayData.load(id);
+  let dayStartTimestamp = dayID * 86400;
+
   if (!dayData) {
     dayData = new ReferralCodeDayData(id);
     dayData.referralCode = referralCode;
     dayData.tradingVolume = BI_ZERO;
-    dayData.date = BI_ZERO;
+    dayData.date = BigInt.fromI32(dayStartTimestamp);
+    dayData.newReferees = [];
     dayData.save();
   }
   return dayData!;

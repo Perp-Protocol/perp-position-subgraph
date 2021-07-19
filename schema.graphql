@@ -103,14 +103,15 @@ type MarginChangedEvent @entity {
   timestamp: BigInt! # last updated timestamp
 }
 
-type Referrer @entity {
+type Trader @entity {
   id: ID!
-  referralCode: ReferralCode!
+  referrerCode: ReferralCode # the referral code the trade owners
+  refereeCode: ReferralCode # the referral code the trader entered
 }
 
 type ReferralCode @entity {
   id: ID!
-  referrer: Referrer! # referrer address
+  referrer: Trader! # referrer address
   referees: [Bytes!]! # referees
   createdAt: BigInt! # created at
 }
@@ -120,4 +121,6 @@ type ReferralCodeDayData @entity {
   referralCode: ReferralCode!
   date: BigInt!
   tradingVolume: BigInt! # trading volume in notional value
+  newReferees: [Bytes!]! # a list of new referees added today
+  activeReferees: [Bytes!]! # a list of referees which have traded on the day
 }
